@@ -51,6 +51,19 @@ func Success(w http.ResponseWriter, msg string, data interface{}) {
 	JSON(w, http.StatusOK, msg, data)
 }
 
+// Paginated writes a 200 OK JSON response with pagination metadata.
+func Paginated(w http.ResponseWriter, msg string, data interface{}, meta *Meta) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	resp := Response{
+		Success: true,
+		Message: msg,
+		Data:    data,
+		Meta:    meta,
+	}
+	_ = json.NewEncoder(w).Encode(resp)
+}
+
 // Created writes a 201 Created JSON response.
 func Created(w http.ResponseWriter, msg string, data interface{}) {
 	JSON(w, http.StatusCreated, msg, data)

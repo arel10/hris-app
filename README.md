@@ -139,7 +139,7 @@ Lihat [Implementation Plan](docs/implementation-plan.md) untuk detail fase penge
 ### Progress
 
 - [x] **Phase 1** — Foundation (Auth, RBAC, Infrastructure)
-- [ ] **Phase 2** — Core HR (Employee, Organization, Dashboard)
+- [x] **Phase 2** — Core HR (Employee, Organization, Dashboard)
 - [ ] **Phase 3** — Attendance & Leave
 - [ ] **Phase 4** — Payroll & Contracts
 - [ ] **Phase 5** — Performance & Development

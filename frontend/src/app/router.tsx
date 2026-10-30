@@ -1,6 +1,10 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 import { AppLayout } from '@/components/layout/AppLayout'
 import { LoginPage } from '@/features/auth/pages/LoginPage'
+import { DashboardPage } from '@/features/dashboard/pages/DashboardPage'
+import { EmployeeListPage } from '@/features/employees/pages/EmployeeListPage'
+import { EmployeeDetailPage } from '@/features/employees/pages/EmployeeDetailPage'
+import { OrganizationPage } from '@/features/organization/pages/OrganizationPage'
 import { useAuthStore } from '@/stores/authStore'
 import type { ReactNode } from 'react'
 
@@ -8,15 +12,6 @@ function ProtectedRoute({ children }: { children: ReactNode }) {
   const { isAuthenticated } = useAuthStore()
   if (!isAuthenticated) return <Navigate to="/login" replace />
   return <>{children}</>
-}
-
-function DashboardPage() {
-  return (
-    <div>
-      <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-      <p className="mt-2 text-gray-500">Selamat datang di PeopleCore HRIS</p>
-    </div>
-  )
 }
 
 function ComingSoonPage({ title }: { title: string }) {
@@ -44,8 +39,9 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <Navigate to="/dashboard" replace /> },
       { path: 'dashboard', element: <DashboardPage /> },
-      { path: 'employees', element: <ComingSoonPage title="Manajemen Karyawan" /> },
-      { path: 'organization', element: <ComingSoonPage title="Manajemen Organisasi" /> },
+      { path: 'employees', element: <EmployeeListPage /> },
+      { path: 'employees/:id', element: <EmployeeDetailPage /> },
+      { path: 'organization', element: <OrganizationPage /> },
       { path: 'attendance', element: <ComingSoonPage title="Manajemen Kehadiran" /> },
       { path: 'leave', element: <ComingSoonPage title="Manajemen Cuti" /> },
       { path: 'payroll', element: <ComingSoonPage title="Penggajian" /> },
@@ -59,4 +55,3 @@ export const router = createBrowserRouter([
     ],
   },
 ])
-
