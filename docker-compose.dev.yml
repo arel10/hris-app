@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: peoplecore-db-dev
+    environment:
+      POSTGRES_DB: peoplecore
+      POSTGRES_USER: peoplecore_user
+      POSTGRES_PASSWORD: peoplecore_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U peoplecore_user -d peoplecore"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_dev_data:
+

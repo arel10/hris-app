@@ -1,0 +1,35 @@
+# Git ignore rules for PeopleCore HRIS
+
+# Environment files
+.env
+*.env.local
+*.env.production
+
+# Go
+backend/vendor/
+backend/bin/
+backend/*.exe
+backend/storage/
+
+# Node
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Docker
+.docker/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
