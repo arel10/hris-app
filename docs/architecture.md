@@ -775,7 +775,7 @@ APP_ENV=development
 APP_PORT=8080
 APP_NAME=peoplecore-api
 
-DATABASE_URL=postgres://peoplecore_user:password@localhost:5432/peoplecore?sslmode=disable
+DATABASE_URL=postgres://peoplecore_user:password@localhost:5433/peoplecore?sslmode=disable
 
 JWT_ACCESS_SECRET=replace_me
 JWT_ACCESS_TTL=15m

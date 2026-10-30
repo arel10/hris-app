@@ -41,7 +41,7 @@ docker compose -f docker-compose.dev.yml up -d
 
 ```bash
 cd backend
-migrate -path ./migrations -database "postgres://peoplecore_user:peoplecore_pass@localhost:5432/peoplecore?sslmode=disable" up
+migrate -path ./migrations -database "postgres://peoplecore_user:peoplecore_pass@localhost:5433/peoplecore?sslmode=disable" up
 ```
 
 ### 4. Seed data awal (roles, permissions, super admin)

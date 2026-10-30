@@ -7,11 +7,11 @@ services:
       POSTGRES_USER: peoplecore_user
       POSTGRES_PASSWORD: peoplecore_pass
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - postgres_dev_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U peoplecore_user -d peoplecore"]
+      test: [ "CMD-SHELL", "pg_isready -U peoplecore_user -d peoplecore" ]
       interval: 5s
       timeout: 5s
       retries: 5
