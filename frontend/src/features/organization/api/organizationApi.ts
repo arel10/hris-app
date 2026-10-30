@@ -53,6 +53,15 @@ export const organizationApi = {
     }
   },
 
+  updateDepartment: async (id: string, data: Partial<CreateDepartmentInput>): Promise<Department> => {
+    try {
+      const res = await apiClient.put<ApiResponse<Department>>(`/departments/${id}`, data)
+      return res.data.data!
+    } catch (err) {
+      return handleApiError(err)
+    }
+  },
+
   deleteDepartment: async (id: string): Promise<void> => {
     try {
       await apiClient.delete(`/departments/${id}`)
@@ -76,6 +85,15 @@ export const organizationApi = {
   createPosition: async (data: CreatePositionInput): Promise<Position> => {
     try {
       const res = await apiClient.post<ApiResponse<Position>>('/positions', data)
+      return res.data.data!
+    } catch (err) {
+      return handleApiError(err)
+    }
+  },
+
+  updatePosition: async (id: string, data: Partial<CreatePositionInput>): Promise<Position> => {
+    try {
+      const res = await apiClient.put<ApiResponse<Position>>(`/positions/${id}`, data)
       return res.data.data!
     } catch (err) {
       return handleApiError(err)

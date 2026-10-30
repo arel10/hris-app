@@ -41,6 +41,7 @@ export const useAuthStore = create<AuthState>()(
 
       hasPermission: (permission) => {
         const { user } = get()
+        if (user?.roles?.includes('super_admin')) return true
         return user?.permissions?.includes(permission) ?? false
       },
 

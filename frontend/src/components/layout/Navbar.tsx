@@ -1,4 +1,5 @@
 import { LogOut, User, Bell } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import { useAuthStore } from '@/stores/authStore'
 import { useLogout } from '@/features/auth/hooks/useAuth'
 
@@ -17,15 +18,19 @@ export function Navbar() {
           <Bell size={18} />
         </button>
 
-        <div className="flex items-center gap-2">
+        <Link
+          to="/profile"
+          className="flex items-center gap-2 rounded-lg p-1.5 hover:bg-gray-100 transition-colors"
+          title="Lihat Profil Saya"
+        >
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100">
             <User size={16} className="text-blue-600" />
           </div>
-          <div className="hidden sm:block">
+          <div className="hidden sm:block text-left">
             <p className="text-sm font-medium text-gray-700">{user?.email}</p>
             <p className="text-xs text-gray-500">{user?.roles?.[0] ?? 'User'}</p>
           </div>
-        </div>
+        </Link>
 
         <button
           type="button"

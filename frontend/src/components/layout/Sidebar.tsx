@@ -1,84 +1,144 @@
 import { NavLink } from 'react-router-dom'
-import {
-  LayoutDashboard,
-  Users,
-  Building2,
-  Clock,
-  Calendar,
-  DollarSign,
-  FileText,
-  Target,
-  UserPlus,
-  GraduationCap,
-  FolderOpen,
-  BarChart3,
-} from 'lucide-react'
-import { cn } from '@/lib/utils/utils'
 import { usePermission } from '@/hooks/usePermission'
+import { useAuthStore } from '@/stores/authStore'
+import { useLogout } from '@/features/auth/hooks/useAuth'
 import { PERMISSIONS } from '@/lib/constants/permissions'
 
-const navItems = [
-  { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard, permission: null },
-  { label: 'Karyawan', href: '/employees', icon: Users, permission: PERMISSIONS.EMPLOYEES_READ },
-  { label: 'Organisasi', href: '/organization', icon: Building2, permission: PERMISSIONS.ORGANIZATION_READ },
-  { label: 'Kehadiran', href: '/attendance', icon: Clock, permission: PERMISSIONS.ATTENDANCE_READ },
-  { label: 'Cuti', href: '/leave', icon: Calendar, permission: PERMISSIONS.LEAVES_READ },
-  { label: 'Penggajian', href: '/payroll', icon: DollarSign, permission: PERMISSIONS.PAYROLL_READ },
-  { label: 'Kontrak', href: '/contracts', icon: FileText, permission: PERMISSIONS.CONTRACTS_READ },
-  { label: 'Kinerja', href: '/performance', icon: Target, permission: PERMISSIONS.PERFORMANCE_READ },
-  { label: 'Rekrutmen', href: '/recruitment', icon: UserPlus, permission: PERMISSIONS.RECRUITMENT_READ },
-  { label: 'Pelatihan', href: '/training', icon: GraduationCap, permission: PERMISSIONS.TRAINING_READ },
-  { label: 'Dokumen', href: '/documents', icon: FolderOpen, permission: PERMISSIONS.DOCUMENTS_READ },
-  { label: 'Laporan', href: '/reports', icon: BarChart3, permission: PERMISSIONS.REPORTS_READ },
+interface NavItemDef {
+  label: string
+  href: string
+  icon: string
+  permission?: string | null
+}
+
+interface NavGroupDef {
+  label: string
+  items: NavItemDef[]
+}
+
+const navGroups: NavGroupDef[] = [
+  {
+    label: 'MENU',
+    items: [
+      { label: 'Dashboard', href: '/dashboard', icon: 'fa-solid fa-chart-pie' },
+      { label: 'Karyawan', href: '/employees', icon: 'fa-solid fa-users', permission: PERMISSIONS.EMPLOYEES_READ },
+      { label: 'Organisasi', href: '/organization', icon: 'fa-solid fa-sitemap', permission: PERMISSIONS.ORGANIZATION_READ },
+    ],
+  },
+  {
+    label: 'SDM',
+    items: [
+      { label: 'Kehadiran', href: '/attendance', icon: 'fa-solid fa-clock', permission: PERMISSIONS.ATTENDANCE_READ },
+      { label: 'Cuti', href: '/leave', icon: 'fa-solid fa-calendar-days', permission: PERMISSIONS.LEAVES_READ },
+      { label: 'Kontrak', href: '/contracts', icon: 'fa-solid fa-file-contract', permission: PERMISSIONS.CONTRACTS_READ },
+      { label: 'Kinerja', href: '/performance', icon: 'fa-solid fa-bullseye', permission: PERMISSIONS.PERFORMANCE_READ },
+      { label: 'Rekrutmen', href: '/recruitment', icon: 'fa-solid fa-user-plus', permission: PERMISSIONS.RECRUITMENT_READ },
+      { label: 'Pelatihan', href: '/training', icon: 'fa-solid fa-graduation-cap', permission: PERMISSIONS.TRAINING_READ },
+    ],
+  },
+  {
+    label: 'FINANCIAL',
+    items: [
+      { label: 'Penggajian', href: '/payroll', icon: 'fa-solid fa-money-bill-wave', permission: PERMISSIONS.PAYROLL_READ },
+    ],
+  },
+  {
+    label: 'TOOLS',
+    items: [
+      { label: 'Dokumen', href: '/documents', icon: 'fa-solid fa-folder-open', permission: PERMISSIONS.DOCUMENTS_READ },
+      { label: 'Laporan', href: '/reports', icon: 'fa-solid fa-chart-simple', permission: PERMISSIONS.REPORTS_READ },
+    ],
+  },
 ]
 
 export function Sidebar() {
   const { hasPermission } = usePermission()
+  const { mutate: logout } = useLogout()
+  const { user } = useAuthStore()
 
   return (
-    <aside className="fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r border-gray-200 bg-white">
-      {/* Logo */}
-      <div className="flex h-14 items-center border-b border-gray-200 px-4">
-        <div className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600">
-            <span className="text-sm font-bold text-white">P</span>
-          </div>
-          <div>
-            <p className="text-sm font-bold text-gray-900">PeopleCore</p>
-            <p className="text-[10px] text-gray-500 uppercase tracking-wider">HRIS</p>
-          </div>
+    <aside
+      className="flex flex-col shrink-0"
+      style={{
+        width: 'var(--sidebar-width)',
+        minWidth: 'var(--sidebar-width)',
+        backgroundColor: 'var(--bg-sidebar)',
+        borderRight: '1px solid var(--border)',
+        padding: '30px 20px',
+      }}
+    >
+      {/* Brand Header */}
+      <div className="flex items-center gap-3 px-2" style={{ marginBottom: '35px' }}>
+        <div
+          className="flex items-center justify-center rounded-xl text-white shadow-sm"
+          style={{
+            width: '36px',
+            height: '36px',
+            backgroundColor: 'var(--primary)',
+          }}
+        >
+          <i className="fa-solid fa-layer-group text-base" />
+        </div>
+        <div>
+          <h2
+            className="font-extrabold tracking-tight text-gray-900 leading-tight"
+            style={{ fontSize: '18px', color: 'var(--dark)' }}
+          >
+            PeopleCore
+          </h2>
+          <p className="text-[10px] font-bold tracking-widest text-gray-400 uppercase">HRIS</p>
         </div>
       </div>
 
-      {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto px-3 py-4">
-        <ul className="space-y-1">
-          {navItems.map((item) => {
-            if (item.permission && !hasPermission(item.permission)) return null
-            const Icon = item.icon
+      {/* Nav Groups */}
+      <nav className="flex-1 space-y-7 overflow-y-auto pr-1">
+        {navGroups.map((group) => {
+          const visibleItems = group.items.filter(
+            (item) => !item.permission || hasPermission(item.permission)
+          )
 
-            return (
-              <li key={item.href}>
-                <NavLink
-                  to={item.href}
-                  className={({ isActive }) =>
-                    cn(
-                      'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-                      isActive
-                        ? 'bg-blue-50 text-blue-700'
-                        : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
-                    )
-                  }
-                >
-                  <Icon size={18} />
-                  {item.label}
-                </NavLink>
-              </li>
-            )
-          })}
-        </ul>
+          if (visibleItems.length === 0) return null
+
+          return (
+            <div key={group.label}>
+              <div className="deck-nav-group-label">{group.label}</div>
+              <ul className="space-y-1.5">
+                {visibleItems.map((item) => (
+                  <li key={item.href}>
+                    <NavLink
+                      to={item.href}
+                      className={({ isActive }) =>
+                        `deck-nav-item ${isActive ? 'active' : ''}`
+                      }
+                    >
+                      <i className={`${item.icon} text-base w-5 text-center`} />
+                      <span>{item.label}</span>
+                    </NavLink>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )
+        })}
+
+        {/* Logout in Tools */}
+        <div>
+          <div className="deck-nav-group-label">AKUN</div>
+          <ul className="space-y-1.5">
+            <li>
+              <button
+                type="button"
+                onClick={() => logout()}
+                className="deck-nav-item w-full text-left"
+                style={{ color: 'var(--danger)' }}
+              >
+                <i className="fa-solid fa-arrow-right-from-bracket text-base w-5 text-center" />
+                <span>Keluar</span>
+              </button>
+            </li>
+          </ul>
+        </div>
       </nav>
     </aside>
   )
 }
-

@@ -47,6 +47,17 @@ export function useCreateDepartment() {
   })
 }
 
+export function useUpdateDepartment() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: Partial<CreateDepartmentInput> }) =>
+      organizationApi.updateDepartment(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['departments'] })
+    },
+  })
+}
+
 export function useDeleteDepartment() {
   const queryClient = useQueryClient()
   return useMutation({
@@ -61,6 +72,17 @@ export function useCreatePosition() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (data: CreatePositionInput) => organizationApi.createPosition(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['positions'] })
+    },
+  })
+}
+
+export function useUpdatePosition() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: Partial<CreatePositionInput> }) =>
+      organizationApi.updatePosition(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['positions'] })
     },

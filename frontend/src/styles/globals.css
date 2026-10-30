@@ -1,38 +1,162 @@
 @import "tailwindcss";
 
-@layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 221.2 83.2% 53.3%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
-    --radius: 0.5rem;
-    --sidebar-width: 260px;
-  }
+:root {
+  /* Surface */
+  --bg-app: #EDF1F7;        /* latar halaman & area konten utama */
+  --bg-sidebar: #F7FAFC;    /* latar sidebar */
+  --bg-card: #FFFFFF;       /* kartu, dropdown, tombol ikon */
+  --bg-subtle: #F1F4FA;     /* latar ikon bulat/persegi di dalam kartu */
+  --bg-dark: #0F1219;       /* promo box, tooltip */
 
-  * {
-    border-color: hsl(var(--border));
-  }
+  /* Brand & semantic */
+  --primary: #1B51F4;
+  --primary-hover: #1541C7;
+  --primary-soft: #5C7EFF;
+  --primary-light: #90A1FF;
+  --purple: #7A52F4;
+  --gold: #FFB800;
+  --success: #10D050;
+  --success-bg: rgba(16, 208, 80, 0.12);
+  --danger: #FF4A55;
+  --danger-bg: rgba(255, 74, 85, 0.12);
 
-  body {
-    background-color: hsl(var(--background));
-    color: hsl(var(--foreground));
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  /* Text */
+  --dark: #1A1E29;          /* teks utama */
+  --muted: #7E879C;         /* teks sekunder, label, ikon nav */
+  --gray-icon: #A0A5B5;
+
+  /* Lines & tracks */
+  --border: #ECEFF5;
+  --track: #EBECF2;         /* track progress bar / gauge */
+  --bar-neutral: #CCD4E5;   /* batang chart non-utama */
+
+  /* Layout */
+  --sidebar-width: 260px;
+  --app-padding: 24px;
+}
+
+body {
+  background-color: var(--bg-app);
+  color: var(--dark);
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+  padding: 0;
+}
+
+/* Custom DealDeck utility & component classes */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+.dashboard-shell {
+  min-height: 100vh;
+  background-color: var(--bg-app);
+  padding: var(--app-padding);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.dashboard-container {
+  width: 100%;
+  max-width: 1400px;
+  min-height: 850px;
+  background-color: var(--bg-card);
+  border-radius: 28px;
+  overflow: hidden;
+  display: flex;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03);
+}
+
+@media (max-width: 1024px) {
+  .dashboard-shell {
+    padding: 0;
+  }
+  .dashboard-container {
+    border-radius: 0;
+    flex-direction: column;
   }
 }
 
+.card-deck {
+  background: var(--bg-card);
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.015);
+  display: flex;
+  flex-direction: column;
+}
+
+.metric-card-deck {
+  height: 155px;
+  border-radius: 20px;
+  padding: 24px;
+  background: var(--bg-card);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.015);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.metric-card-deck.primary-blue {
+  background-color: var(--primary);
+  color: #FFFFFF;
+}
+
+.badge-trend-deck {
+  display: inline-flex;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 100px;
+  padding: 4px 8px;
+  line-height: 1;
+}
+
+.badge-trend-deck.positive {
+  background-color: var(--success-bg);
+  color: var(--success);
+}
+
+.badge-trend-deck.negative {
+  background-color: var(--danger-bg);
+  color: var(--danger);
+}
+
+/* Nav Item styling */
+.deck-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--muted);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.deck-nav-item:hover {
+  background-color: rgba(27, 81, 244, 0.05);
+  color: var(--primary);
+}
+
+.deck-nav-item.active {
+  background-color: var(--primary);
+  color: #FFFFFF;
+  box-shadow: 0 4px 15px rgba(27, 81, 244, 0.25);
+}
+
+.deck-nav-group-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  padding-left: 16px;
+}

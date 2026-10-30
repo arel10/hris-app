@@ -60,3 +60,72 @@ export function useUpdateEmployeeStatus(id: string) {
   })
 }
 
+export function useAddContact(employeeId: string) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (data: { contact_type: string; contact_value: string; is_primary: boolean }) =>
+      employeeApi.addContact(employeeId, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['employee', employeeId] })
+    },
+  })
+}
+
+export function useDeleteContact(employeeId: string) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (contactId: string) => employeeApi.deleteContact(employeeId, contactId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['employee', employeeId] })
+    },
+  })
+}
+
+export function useAddAddress(employeeId: string) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (data: {
+      address_type: string
+      street: string
+      city?: string
+      province?: string
+      postal_code?: string
+      is_primary: boolean
+    }) => employeeApi.addAddress(employeeId, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['employee', employeeId] })
+    },
+  })
+}
+
+export function useDeleteAddress(employeeId: string) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (addressId: string) => employeeApi.deleteAddress(employeeId, addressId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['employee', employeeId] })
+    },
+  })
+}
+
+export function useAddBankAccount(employeeId: string) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (data: { bank_name: string; account_number: string; account_holder: string; is_primary: boolean }) =>
+      employeeApi.addBankAccount(employeeId, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['employee', employeeId] })
+    },
+  })
+}
+
+export function useDeleteBankAccount(employeeId: string) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (bankId: string) => employeeApi.deleteBankAccount(employeeId, bankId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['employee', employeeId] })
+    },
+  })
+}
+

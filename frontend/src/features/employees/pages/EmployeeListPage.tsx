@@ -3,12 +3,16 @@ import { Link } from 'react-router-dom'
 import { useEmployees } from '../hooks/useEmployees'
 import { useDepartments } from '@/features/organization/hooks/useOrganization'
 import { CreateEmployeeModal } from '../components/CreateEmployeeModal'
-import { Button } from '@/components/ui/button'
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner'
 import { formatDate } from '@/lib/utils/utils'
-import { UserPlus, Search, Filter, ChevronLeft, ChevronRight, Eye } from 'lucide-react'
+import { usePermission } from '@/hooks/usePermission'
+import { PERMISSIONS } from '@/lib/constants/permissions'
+import { ContentHeader } from '@/components/layout/ContentHeader'
 
 export function EmployeeListPage() {
+  const { hasPermission } = usePermission()
+  const canCreate = hasPermission(PERMISSIONS.EMPLOYEES_CREATE)
+
   const [page, setPage] = useState(1)
   const [search, setSearch] = useState('')
   const [selectedDept, setSelectedDept] = useState('')
@@ -29,134 +33,248 @@ export function EmployeeListPage() {
   const meta = data?.meta
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Direktori Karyawan</h1>
-          <p className="text-sm text-gray-500">
-            Kelola data seluruh karyawan, status penempatan, dan riwayat pekerjaan
-          </p>
+    <div className="flex flex-col gap-6">
+      {/* Content Header */}
+      <ContentHeader
+        title="Direktori Karyawan"
+        subtitle="Kelola data seluruh karyawan, status penempatan, dan riwayat pekerjaan"
+        action={
+          canCreate ? (
+            <button
+              type="button"
+              onClick={() => setIsModalOpen(true)}
+              className="inline-flex items-center gap-2 rounded-xl text-white font-semibold shadow-sm transition-all hover:opacity-95 cursor-pointer"
+              style={{
+                backgroundColor: 'var(--primary)',
+                padding: '10px 18px',
+                fontSize: '12px',
+              }}
+            >
+              <i className="fa-solid fa-user-plus text-xs" />
+              Tambah Karyawan
+            </button>
+          ) : undefined
+        }
+      />
+
+      {/* Main Table Card */}
+      <div className="card-deck">
+        {/* Filter and Search Bar */}
+        <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between pb-5 border-b" style={{ borderColor: 'var(--border)' }}>
+          <div className="relative flex-1 max-w-md">
+            <i
+              className="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-xs"
+              style={{ color: 'var(--muted)' }}
+            />
+            <input
+              type="text"
+              placeholder="Cari nama, email, atau nomor karyawan..."
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value)
+                setPage(1)
+              }}
+              className="w-full pl-9 pr-4 py-2 rounded-[10px] focus:outline-none transition-all"
+              style={{
+                backgroundColor: 'var(--bg-card)',
+                border: '1px solid var(--border)',
+                fontSize: '12px',
+                color: 'var(--dark)',
+              }}
+              onFocus={(e) => (e.target.style.borderColor = 'var(--primary)')}
+              onBlur={(e) => (e.target.style.borderColor = 'var(--border)')}
+            />
+          </div>
+
+          <div className="flex items-center gap-2">
+            <select
+              value={selectedDept}
+              onChange={(e) => {
+                setSelectedDept(e.target.value)
+                setPage(1)
+              }}
+              className="px-3 py-2 rounded-[10px] focus:outline-none transition-all cursor-pointer"
+              style={{
+                backgroundColor: 'var(--bg-card)',
+                border: '1px solid var(--border)',
+                fontSize: '12px',
+                fontWeight: 600,
+                color: 'var(--dark)',
+              }}
+            >
+              <option value="">Semua Departemen</option>
+              {departments.map((d) => (
+                <option key={d.id} value={d.id}>
+                  {d.name}
+                </option>
+              ))}
+            </select>
+
+            <select
+              value={selectedStatus}
+              onChange={(e) => {
+                setSelectedStatus(e.target.value)
+                setPage(1)
+              }}
+              className="px-3 py-2 rounded-[10px] focus:outline-none transition-all cursor-pointer"
+              style={{
+                backgroundColor: 'var(--bg-card)',
+                border: '1px solid var(--border)',
+                fontSize: '12px',
+                fontWeight: 600,
+                color: 'var(--dark)',
+              }}
+            >
+              <option value="">Semua Status</option>
+              <option value="active">Aktif</option>
+              <option value="probation">Probation</option>
+              <option value="inactive">Tidak Aktif</option>
+              <option value="terminated">Terminated</option>
+            </select>
+          </div>
         </div>
-        <Button onClick={() => setIsModalOpen(true)} className="flex items-center gap-1.5">
-          <UserPlus size={16} />
-          Tambah Karyawan
-        </Button>
-      </div>
 
-      {/* Filter and Search Bar */}
-      <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200 flex flex-col md:flex-row gap-3 items-stretch md:items-center">
-        <div className="relative flex-1">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Cari nama, email, atau nomor karyawan..."
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value)
-              setPage(1)
-            }}
-            className="w-full pl-9 pr-4 py-2 text-sm rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
-          />
-        </div>
-
-        <div className="flex items-center gap-2">
-          <Filter size={16} className="text-gray-400 hidden sm:block" />
-          <select
-            value={selectedDept}
-            onChange={(e) => {
-              setSelectedDept(e.target.value)
-              setPage(1)
-            }}
-            className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 bg-white"
-          >
-            <option value="">Semua Departemen</option>
-            {departments.map((d) => (
-              <option key={d.id} value={d.id}>
-                {d.name}
-              </option>
-            ))}
-          </select>
-
-          <select
-            value={selectedStatus}
-            onChange={(e) => {
-              setSelectedStatus(e.target.value)
-              setPage(1)
-            }}
-            className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 bg-white"
-          >
-            <option value="">Semua Status</option>
-            <option value="active">Aktif</option>
-            <option value="probation">Probation</option>
-            <option value="inactive">Tidak Aktif</option>
-            <option value="terminated">Terminated</option>
-          </select>
-        </div>
-      </div>
-
-      {/* Table */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        {/* Table Content */}
         {isLoading ? (
-          <div className="p-12 flex justify-center">
+          <div className="p-16 flex justify-center">
             <LoadingSpinner size={28} />
           </div>
         ) : employees.length === 0 ? (
-          <div className="p-12 text-center text-gray-400">
+          <div
+            className="p-16 text-center"
+            style={{ fontSize: '12px', color: 'var(--muted)' }}
+          >
             Tidak ada data karyawan yang sesuai kriteria pencarian
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead className="bg-gray-50 text-gray-600 uppercase text-xs border-b border-gray-100">
-                <tr>
-                  <th className="px-6 py-3">No. Karyawan</th>
-                  <th className="px-6 py-3">Karyawan</th>
-                  <th className="px-6 py-3">Departemen</th>
-                  <th className="px-6 py-3">Jabatan</th>
-                  <th className="px-6 py-3">Status</th>
-                  <th className="px-6 py-3">Bergabung</th>
-                  <th className="px-6 py-3 text-right">Aksi</th>
+          <div className="overflow-x-auto -mx-6 px-6">
+            <table className="w-full text-left" style={{ borderCollapse: 'collapse' }}>
+              <thead>
+                <tr style={{ borderBottom: '1.5px solid var(--border)' }}>
+                  <th
+                    className="py-3.5 px-4 font-bold tracking-wider uppercase"
+                    style={{ fontSize: '11px', color: 'var(--muted)' }}
+                  >
+                    No. Karyawan
+                  </th>
+                  <th
+                    className="py-3.5 px-4 font-bold tracking-wider uppercase"
+                    style={{ fontSize: '11px', color: 'var(--muted)' }}
+                  >
+                    Karyawan
+                  </th>
+                  <th
+                    className="py-3.5 px-4 font-bold tracking-wider uppercase"
+                    style={{ fontSize: '11px', color: 'var(--muted)' }}
+                  >
+                    Departemen
+                  </th>
+                  <th
+                    className="py-3.5 px-4 font-bold tracking-wider uppercase"
+                    style={{ fontSize: '11px', color: 'var(--muted)' }}
+                  >
+                    Jabatan
+                  </th>
+                  <th
+                    className="py-3.5 px-4 font-bold tracking-wider uppercase"
+                    style={{ fontSize: '11px', color: 'var(--muted)' }}
+                  >
+                    Status
+                  </th>
+                  <th
+                    className="py-3.5 px-4 font-bold tracking-wider uppercase"
+                    style={{ fontSize: '11px', color: 'var(--muted)' }}
+                  >
+                    Bergabung
+                  </th>
+                  <th
+                    className="py-3.5 px-4 font-bold tracking-wider uppercase text-right"
+                    style={{ fontSize: '11px', color: 'var(--muted)' }}
+                  >
+                    Aksi
+                  </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody>
                 {employees.map((emp) => {
                   const fullName = `${emp.first_name} ${emp.last_name || ''}`.trim()
-                  const statusColors: Record<string, string> = {
-                    active: 'bg-green-50 text-green-700 border-green-200',
-                    probation: 'bg-amber-50 text-amber-700 border-amber-200',
-                    inactive: 'bg-gray-50 text-gray-600 border-gray-200',
-                    terminated: 'bg-red-50 text-red-700 border-red-200',
-                  }
+                  const isPositive = emp.employment_status === 'active'
+                  const isDanger = emp.employment_status === 'terminated'
 
                   return (
-                    <tr key={emp.id} className="hover:bg-gray-50/50 transition-colors">
-                      <td className="px-6 py-4 font-mono font-medium text-blue-600">
+                    <tr
+                      key={emp.id}
+                      className="transition-colors hover:bg-gray-50/50"
+                      style={{ borderBottom: '1px solid var(--border)' }}
+                    >
+                      <td
+                        className="py-3.5 px-4 font-bold tabular-nums"
+                        style={{ fontSize: '11px', color: 'var(--muted)' }}
+                      >
                         {emp.employee_number}
                       </td>
-                      <td className="px-6 py-4">
-                        <div className="font-semibold text-gray-900">{fullName}</div>
-                        <div className="text-xs text-gray-400">{emp.email}</div>
+                      <td className="py-3.5 px-4">
+                        <div
+                          className="font-bold leading-tight"
+                          style={{ fontSize: '12px', color: 'var(--dark)' }}
+                        >
+                          {fullName}
+                        </div>
+                        <div
+                          style={{ fontSize: '10px', color: 'var(--muted)' }}
+                        >
+                          {emp.email}
+                        </div>
                       </td>
-                      <td className="px-6 py-4 text-gray-600">{emp.department_name || '-'}</td>
-                      <td className="px-6 py-4 text-gray-600 font-medium">
+                      <td
+                        className="py-3.5 px-4 font-semibold"
+                        style={{ fontSize: '12px', color: 'var(--muted)' }}
+                      >
+                        {emp.department_name || '-'}
+                      </td>
+                      <td
+                        className="py-3.5 px-4 font-semibold"
+                        style={{ fontSize: '12px', color: 'var(--dark)' }}
+                      >
                         {emp.position_title || '-'}
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="py-3.5 px-4">
                         <span
-                          className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border capitalize ${
-                            statusColors[emp.employment_status] || 'bg-gray-50 text-gray-700'
-                          }`}
+                          className="badge-trend-deck capitalize"
+                          style={{
+                            backgroundColor: isPositive
+                              ? 'var(--success-bg)'
+                              : isDanger
+                              ? 'var(--danger-bg)'
+                              : 'var(--bg-subtle)',
+                            color: isPositive
+                              ? 'var(--success)'
+                              : isDanger
+                              ? 'var(--danger)'
+                              : 'var(--muted)',
+                          }}
                         >
                           {emp.employment_status}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-gray-500">{formatDate(emp.join_date)}</td>
-                      <td className="px-6 py-4 text-right">
+                      <td
+                        className="py-3.5 px-4"
+                        style={{ fontSize: '10px', color: 'var(--muted)' }}
+                      >
+                        {formatDate(emp.join_date)}
+                      </td>
+                      <td className="py-3.5 px-4 text-right">
                         <Link
                           to={`/employees/${emp.id}`}
-                          className="inline-flex items-center gap-1 text-xs font-medium text-blue-600 hover:text-blue-800 bg-blue-50 px-2.5 py-1.5 rounded-md hover:bg-blue-100 transition-colors"
+                          className="inline-flex items-center gap-1.5 font-bold rounded-[8px] transition-all hover:opacity-85"
+                          style={{
+                            fontSize: '11px',
+                            backgroundColor: 'rgba(27, 81, 244, 0.08)',
+                            color: 'var(--primary)',
+                            padding: '6px 12px',
+                          }}
                         >
-                          <Eye size={14} />
+                          <i className="fa-solid fa-eye text-[10px]" />
                           Detail
                         </Link>
                       </td>
@@ -170,28 +288,43 @@ export function EmployeeListPage() {
 
         {/* Pagination Footer */}
         {meta && meta.total_pages > 1 && (
-          <div className="flex items-center justify-between px-6 py-3 border-t border-gray-100 text-sm text-gray-600 bg-gray-50/50">
+          <div
+            className="flex items-center justify-between pt-4 mt-2"
+            style={{ fontSize: '12px', color: 'var(--muted)' }}
+          >
             <div>
               Menampilkan {employees.length} dari {meta.total} karyawan (Halaman {meta.page} dari{' '}
               {meta.total_pages})
             </div>
-            <div className="flex items-center gap-1">
-              <Button
-                variant="outline"
-                size="sm"
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
                 disabled={page <= 1}
                 onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+                className="flex items-center justify-center rounded-[8px] transition-all disabled:opacity-30 cursor-pointer"
+                style={{
+                  width: '32px',
+                  height: '32px',
+                  backgroundColor: 'var(--bg-subtle)',
+                  color: 'var(--dark)',
+                }}
               >
-                <ChevronLeft size={16} />
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
+                <i className="fa-solid fa-chevron-left text-xs" />
+              </button>
+              <button
+                type="button"
                 disabled={page >= meta.total_pages}
                 onClick={() => setPage((prev) => prev + 1)}
+                className="flex items-center justify-center rounded-[8px] transition-all disabled:opacity-30 cursor-pointer"
+                style={{
+                  width: '32px',
+                  height: '32px',
+                  backgroundColor: 'var(--bg-subtle)',
+                  color: 'var(--dark)',
+                }}
               >
-                <ChevronRight size={16} />
-              </Button>
+                <i className="fa-solid fa-chevron-right text-xs" />
+              </button>
             </div>
           </div>
         )}
@@ -201,4 +334,3 @@ export function EmployeeListPage() {
     </div>
   )
 }
-

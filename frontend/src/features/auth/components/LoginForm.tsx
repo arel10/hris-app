@@ -1,7 +1,6 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Eye, EyeOff, Loader2 } from 'lucide-react'
 import { useState } from 'react'
 import { useLogin } from '../hooks/useAuth'
 import { ApiClientError } from '@/lib/api/errors'
@@ -26,74 +25,109 @@ export function LoginForm() {
     login(data)
   }
 
-  const errorMessage = error instanceof ApiClientError ? error.message : error ? 'Terjadi kesalahan' : null
+  const errorMessage = error instanceof ApiClientError ? error.message : error ? 'Terjadi kesalahan autentikasi' : null
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
       {errorMessage && (
-        <div className="rounded-md bg-red-50 p-3 text-sm text-red-600 border border-red-200">
+        <div
+          className="rounded-[10px] p-3 text-xs font-semibold"
+          style={{
+            backgroundColor: 'var(--danger-bg)',
+            color: 'var(--danger)',
+          }}
+        >
           {errorMessage}
         </div>
       )}
 
       <div className="space-y-1">
-        <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-          Email
+        <label
+          htmlFor="email"
+          className="block font-bold uppercase tracking-wider"
+          style={{ fontSize: '10px', color: 'var(--muted)' }}
+        >
+          Email Perusahaan
         </label>
         <input
           id="email"
           type="email"
           autoComplete="email"
-          className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:opacity-50"
+          placeholder="admin@peoplecore.local"
+          className="w-full rounded-[10px] px-3.5 py-2.5 text-xs focus:outline-none transition-all"
+          style={{
+            backgroundColor: 'var(--bg-card)',
+            border: '1px solid var(--border)',
+            color: 'var(--dark)',
+          }}
           disabled={isPending}
           {...form.register('email')}
         />
         {form.formState.errors.email && (
-          <p className="text-xs text-red-500">{form.formState.errors.email.message}</p>
+          <p className="text-[10px] font-semibold" style={{ color: 'var(--danger)' }}>
+            {form.formState.errors.email.message}
+          </p>
         )}
       </div>
 
       <div className="space-y-1">
-        <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-          Password
+        <label
+          htmlFor="password"
+          className="block font-bold uppercase tracking-wider"
+          style={{ fontSize: '10px', color: 'var(--muted)' }}
+        >
+          Kata Sandi
         </label>
         <div className="relative">
           <input
             id="password"
             type={showPassword ? 'text' : 'password'}
             autoComplete="current-password"
-            className="block w-full rounded-md border border-gray-300 px-3 py-2 pr-10 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:opacity-50"
+            placeholder="••••••••"
+            className="w-full rounded-[10px] px-3.5 py-2.5 pr-10 text-xs focus:outline-none transition-all"
+            style={{
+              backgroundColor: 'var(--bg-card)',
+              border: '1px solid var(--border)',
+              color: 'var(--dark)',
+            }}
             disabled={isPending}
             {...form.register('password')}
           />
           <button
             type="button"
-            className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer p-1 transition-colors"
+            style={{ color: 'var(--muted)' }}
             onClick={() => setShowPassword(!showPassword)}
           >
-            {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+            <i className={`fa-solid ${showPassword ? 'fa-eye-slash' : 'fa-eye'} text-xs`} />
           </button>
         </div>
         {form.formState.errors.password && (
-          <p className="text-xs text-red-500">{form.formState.errors.password.message}</p>
+          <p className="text-[10px] font-semibold" style={{ color: 'var(--danger)' }}>
+            {form.formState.errors.password.message}
+          </p>
         )}
       </div>
 
       <button
         type="submit"
         disabled={isPending}
-        className="flex w-full items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 transition-colors"
+        className="flex w-full items-center justify-center gap-2 rounded-[10px] font-bold text-white transition-all hover:opacity-95 cursor-pointer disabled:opacity-50 mt-2"
+        style={{
+          backgroundColor: 'var(--primary)',
+          padding: '11px 16px',
+          fontSize: '12px',
+        }}
       >
         {isPending ? (
           <>
-            <Loader2 size={16} className="mr-2 animate-spin" />
-            Masuk...
+            <i className="fa-solid fa-circle-notch fa-spin text-xs" />
+            Memproses...
           </>
         ) : (
-          'Masuk'
+          'Masuk ke Sistem'
         )}
       </button>
     </form>
   )
 }
-

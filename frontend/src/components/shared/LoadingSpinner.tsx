@@ -1,4 +1,3 @@
-import { Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils/utils'
 
 interface LoadingSpinnerProps {
@@ -8,14 +7,20 @@ interface LoadingSpinnerProps {
 }
 
 export function LoadingSpinner({ size = 24, className, fullScreen }: LoadingSpinnerProps) {
+  const spinner = (
+    <i
+      className={cn('fa-solid fa-circle-notch fa-spin', className)}
+      style={{ fontSize: `${size}px`, color: 'var(--primary)' }}
+    />
+  )
+
   if (fullScreen) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <Loader2 size={size} className={cn('animate-spin text-blue-600', className)} />
+        {spinner}
       </div>
     )
   }
 
-  return <Loader2 size={size} className={cn('animate-spin text-blue-600', className)} />
+  return spinner
 }
-
